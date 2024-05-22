@@ -13,4 +13,18 @@ model User {
   email    String @unique
   password String
   type     String @default("Student")
+
+  profile TeacherProfile?
+}
+
+model TeacherProfile {
+  id            Int    @id @default(autoincrement())
+  qualification String
+  experience    Int
+  subject       String
+  about         String
+  city          String
+
+  user_id Int  @unique
+  user    User @relation(fields: [user_id], references: [id])
 }

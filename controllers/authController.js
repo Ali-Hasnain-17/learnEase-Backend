@@ -58,7 +58,7 @@ export async function login(req, res) {
     });
     res
       .status(200)
-      .json({ isSuccess: true, message: "Login Success", type: user.type });
+      .json({ isSuccess: true, message: "Login Success", user: user });
   } catch (e) {
     return res
       .status(500)
