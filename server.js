@@ -3,11 +3,23 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import authRoutes from "./routes/authRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
+import { isAuth } from "./middlewares/isAuth.js";
+
+import { Server } from "socket.io";
+
+const io = new Server(5001);
+
+io.on("connection", (socket) => {
+  socket.on("message-send", (data) => {
+    socket.broadcast.emit("message-receive", data);
+  });
+});
 
 const app = express();
 app.use(
   cors({
     origin: "http://localhost:5173",
+    credentials: true,
   })
 );
 app.use(cookieParser());

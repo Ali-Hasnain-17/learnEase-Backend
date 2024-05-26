@@ -1,7 +1,7 @@
 import { prisma } from "../db.js";
 
 export async function createProfile(req, res) {
-  const { qualification, experience, subject, city, about, userId } = req.body;
+  const { qualification, experience, subject, city, about } = req.body;
 
   try {
     const profile = await prisma.teacherProfile.create({
@@ -11,7 +11,7 @@ export async function createProfile(req, res) {
         subject,
         city,
         about,
-        user_id: userId,
+        user_id: req.user.id,
       },
     });
 
@@ -27,7 +27,6 @@ export async function createProfile(req, res) {
 
 export async function getProfile(req, res) {
   const userId = +req.params.id;
-  console.log(userId);
   try {
     const profile = await prisma.teacherProfile.findUnique({
       where: { user_id: userId },
@@ -39,4 +38,21 @@ export async function getProfile(req, res) {
   } catch (e) {
     return res.status(500).json({ message: "Internal Server Error" });
   }
+}
+
+export async function searchProfile(req, res) {
+  const { q: searchQuery } = req.query;
+
+  const teachers = await prisma.teacherProfile.findMany({
+    where: {
+      OR: [
+        { qualification: { contains: searchQuery } },
+        { subject: { contains: searchQuery } },
+        { about: { contains: searchQuery } },
+        { city: { contains: searchQuery } },
+      ],
+    },
+  });
+
+  res.json({ teachers });
 }
